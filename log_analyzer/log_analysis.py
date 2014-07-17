@@ -3,7 +3,15 @@ import random
 import MeCab
 import re
 
+
+
+
+
+
 if __name__ == "__main__":
+    parseLog()
+
+def parseLog():
     srcfilename = "log.txt"
     destfilename = "learnsrc.txt"
     f = open(srcfilename, "r")
@@ -17,5 +25,7 @@ if __name__ == "__main__":
         line = f.readline()
         f.close  
     f2.close()
+ 
+
 
 #    print m
