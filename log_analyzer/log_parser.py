@@ -12,7 +12,16 @@ sys.path.append(os.pardir)
 
 class PlayersLog():
     def __init__(self):
-        self.dictionary = {}
+        self.log = None
+
+    def pickUpJob(self,job_name):
+        players_list = [] 
+        for name in self.log.keys():
+            for character in self.log[name]: 
+                print character["job"]
+                #if character["job"] == job_name:
+                    #players_list.append(character)
+        
 
     #わかめてのログ用のパーサ。中間ファイルを生成。
     def parseLog(self,srcfilename = "./log_analyzer/log_src.txt",destfilename = "./log_analyzer/log_dest.txt"):
@@ -61,26 +70,32 @@ class PlayersLog():
                 if characters.has_key(name) and not text == "": #仮で入って途中から名前変えた場合と、二行にまたがった発言は除く
                     idx = len(characters[name]) - 1 #同名のプレイヤーは基本的に最新のものを見続ける
                     characters[name][idx]["texts"].append(text)
+                    f2.write(name + "(" +characters[name][idx]["job"] + ")" + "「" + text  + "」"+ "\n") # 引数の文字列をファイルに書き込む
             line = f.readline()
-
-        player_names = characters.keys()
-        for name in player_names:
-            for character in characters[name]: 
-                for text in character["texts"]:
-                    f2.write(name + "(" +character["job"] + ")" + "「" + text  + "」"+ "\n") # 引数の文字列をファイルに書き込む 
+        
+       # player_names = characters.keys()
+       # for name in player_names:
+       #     for character in characters[name]: 
+       #         for text in character["texts"]:
+       #             f2.write(name + "(" +character["job"] + ")" + "「" + text  + "」"+ "\n") # 引数の文字列をファイルに書き込む 
         f.close()
         f2.close()
-        self.dictionary = characters
+        return characters
+
+    def getLog(self):
+        self.log = self.parseLog()
+
 
 ######実行ファイル時###########
 
 if __name__ == "__main__":
     params = sys.argv
-    players_log = PlayersLog()
+    log = PlayersLog()
     if len(params) >= 3 :
         srcfilename = params[1]
         destfilename = params[2]
-        players_log.parseLog(srcfilename,destfilename)
+        log.parseLog(srcfilename,destfilename)
     else:
-        players_log.parseLog()
-        
+        log.getLog()
+        #print log.log
+        print log.pickUpJob("人狼")
