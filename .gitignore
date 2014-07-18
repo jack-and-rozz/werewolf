@@ -1,6 +1,6 @@
 
 
 
-/servey
-/log_analyzer/*.txt
+./servey
+./log_analyzer/*.txt
 *.pyc
