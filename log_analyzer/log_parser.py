@@ -70,7 +70,7 @@ class PlayersLog():
                     f2.write(name + "(" +character["job"] + ")" + "「" + text  + "」"+ "\n") # 引数の文字列をファイルに書き込む 
         f.close()
         f2.close()
-        return players_log
+        self.dictionary = characters
 
 ######実行ファイル時###########
 
