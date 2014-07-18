@@ -40,14 +40,14 @@ class Const:
     NoOne = -99
 
     JobNameWords = {
-        Wolf : "狼",
-        Lunatic : "狂",
-        Seer : "占",
-        Medium : "霊",
-        Hunter : "狩",
-        Villager : "村",
-        Freemason : "共",
-        Fox : "狐",
+        Wolf : "人狼",
+        Lunatic : "狂人",
+        Seer : "占い師",
+        Medium : "霊能者",
+        Hunter : "狩人",
+        Villager : "村人",
+        Freemason : "共有者",
+        Fox : "妖狐",
     }
     JobsList = [Wolf,Villager,Villager,Villager,Seer,Wolf,Medium,Villager,Lunatic,Hunter,Villager,Villager,Villager,Freemason,Freemason,Villager,Villager]
     ActorNameListA = ["楽天家","村長","老人","神父","木こり","旅人","ならず者","少年","少女","行商人","羊飼い","パン屋","青年","村娘","農夫","宿屋の女主人","シスター","仕立屋","司書","負傷兵"]
