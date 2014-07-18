@@ -1690,7 +1690,6 @@ six ◆666666oero
 たぬ ◆DqPeLT.wgM
 [村　人]
 （生存中）
-　毒舌いもむし
 　	妹蟲
 ガチ妹 ◆cjGIWbq2Tk
 [村　人]
@@ -6354,7 +6353,7 @@ lucky ◆Lucky22Tsw
 ktzk ◆YYYYY/ktzk
 [人　狼]
 （死　亡）
-　うまい棒ではない
+s　うまい棒ではない
 　	うまい輪
 ◆DwSKBhB9xQ
 [村　人]

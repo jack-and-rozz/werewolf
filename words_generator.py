@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import random
 import MeCab
+import sys,os
 
 
 #とりあえず毎回学習。サイズが大きくなってくると学習結果を保存したほうが良さそう。
@@ -10,7 +11,7 @@ import MeCab
 
 class WordsGenerator():
     def __init__(self) :
-        self.wordlist = self.makeWordList("learnsrc.txt")
+        self.wordlist = self.makeWordList(os.path.dirname(os.path.abspath(__file__)) + "/log_analyzer/log_dest.txt")
         self.markov = self.makeMarkov()
     def makeWordList(self,filename):
         text = open(filename, "r").read()
