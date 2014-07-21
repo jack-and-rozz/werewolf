@@ -14,7 +14,8 @@ class Const:
     Hunter = 5
     Freemason = 6
     Fox = 7
-    
+    Cat = 8
+    Childfox = 9
     Night = 98
     Day = 99
 
@@ -48,6 +49,8 @@ class Const:
         Villager : "村人",
         Freemason : "共有者",
         Fox : "妖狐",
+        #Cat : "猫又",
+        #ChildFox : "子狐"
     }
     JobsList = [Wolf,Villager,Villager,Villager,Seer,Wolf,Medium,Villager,Lunatic,Hunter,Villager,Villager,Villager,Freemason,Freemason,Villager,Villager]
     ActorNameListA = ["楽天家","村長","老人","神父","木こり","旅人","ならず者","少年","少女","行商人","羊飼い","パン屋","青年","村娘","農夫","宿屋の女主人","シスター","仕立屋","司書","負傷兵"]

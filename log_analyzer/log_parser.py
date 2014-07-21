@@ -1,8 +1,9 @@
 # coding: utf-8 
-import random
+
+import random,math,re
 import MeCab
-import re
 import sys,os
+import codecs
 
 sys.path.append(os.pardir)
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/" + os.pardir)
@@ -10,7 +11,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/" + os.pardir)
 #print os.path.dirname(os.path.abspath(__file__))
 from werewolf_dictionary import Const
 
-
+PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
 #この先の予定：
 #単体の形態素・マルコフ遷移だけではなく、複数行前の文のパラメータに応じて分類をする。どう分類をする？
 #発言の方は難しい。発言パターンを大量に登録して、どれを使うかを選ぶ。
@@ -20,13 +21,15 @@ class PlayersLog():
     def __init__(self):
         self.log = {}
         self.jobList = Const.JobNameWords.values()
+        self.jobsNum = {} #各村ごとにどの役職が何人いるかを記録
         self.counts = {}
         self.evaluation = {}
-        self.speakNums = {}
+        self.speakNum = {}
         self.jobSuspection = {}
         for j in self.jobList:
             self.jobSuspection[j] = 0.0
-            self.speakNums[j] = 0
+            self.speakNum[j] = 0
+            self.jobsNum[j] = 0 #ログ中の役職の数。各役職の話す頻度を記録するために発言の評価値を役職数で割る？
     def pickUpJob(self,job_name):
         players_list = [] 
         for name in self.log.keys():
@@ -36,10 +39,11 @@ class PlayersLog():
         return players_list
 
     #わかめてのログ用のパーサ。中間ファイルを生成。
-    def parseWakameteLog(self,srcfilename = "./log_analyzer/log_src.txt",characters = {}):
+    def parseWakameteLog(self,srcfilename = os.path.dirname(os.path.abspath(__file__))  + "/log_src.txt",characters = {}):
         f = open(srcfilename, "r")
         line = f.readline() # 1行を文字列として読み込む(改行文字も含まれる)
         while line:
+            #*****キャラクターデータ*****
             m = re.search('◆ 村人たち.+',line) #◆ 村人たち　から ◆ 出来事 までの間でキャラの情報がある
             if not m == None:
                 line = f.readline() #一行読み飛ばす
@@ -67,8 +71,11 @@ class PlayersLog():
                         characters[character_name][idx]["job"] = character_job
                         characters[character_name][idx]["life"] = character_life
                         characters[character_name][idx]["texts"] = []
+                        if self.jobsNum.has_key(character_job):
+                            self.jobsNum[character_job] += 1 
                     # characters : 名前をキーにして、職業・最終的な生存・喋った言葉　を持つハッシュ。同名の場合は配列に。
-                    #プレイヤーの台詞
+           
+            #*****プレイヤーの台詞*****
             m = re.match('◆([^\s]+)?さん[^の念話]+\s*(「.*)?',line) 
             if not m == None :#192.168.20.2
                 name = m.group(1).strip().replace("\t","").replace("　","").replace("　","")
@@ -122,29 +129,39 @@ class PlayersLog():
                 h2[j] = 0.0
             self.counts[morpheme] = h
             self.evaluation[morpheme] = h2
-        self.speakNums[job] += 1
+        self.speakNum[job] += 1
         self.counts[morpheme][job] += 1
     def morphemeScoring(self):
         for morpheme in self.evaluation.keys():
             c = sum(self.counts[morpheme].values()) * 1.0
             for j in self.jobList:
-                if not self.speakNums[j] == 0:
+                if not self.speakNum[j] == 0:
                     #全員が良く言う言葉(役職名、挨拶)は頻度が当然高くなるので補正するため他の役職の発言数でも割る
-                    CONST = 4 #自分の発言数をどこまで除くべきか？除かなくていいのか？とりあえず人狼がちゃんと人狼と判定されるとこまで。
+                    CONST = 100 #自分の発言数をどこまで除くべきか？除かなくていいのか？とりあえず人狼がちゃんと人狼と判定されるとこまで。
                     c2 = c - self.counts[morpheme][j]/CONST if not c == self.counts[morpheme][j] else 1.0
-                    s = self.counts[morpheme][j] / c2 / self.speakNums[j]
+                    s = 10**6 * self.counts[morpheme][j] / c2 / self.speakNum[j]
                     self.evaluation[morpheme][j] = s
         r = random.randint(0,len(self.evaluation.keys())-1)
         r2 = random.randint(0,len(self.evaluation.keys())-1)
         r3 = random.randint(0,len(self.evaluation.keys())-1)
-        #print self.evaluation.keys()[r]
-        #print self.evaluation[self.evaluation.keys()[r]]
-        #print self.evaluation.keys()[r2]
-        #print self.evaluation[self.evaluation.keys()[r2]]
-        #print self.evaluation.keys()[r3]
-        #print self.evaluation[self.evaluation.keys()[r3]]
+        print self.evaluation.keys()[r]
+        print self.evaluation[self.evaluation.keys()[r]]
+        print self.evaluation.keys()[r2]
+        print self.evaluation[self.evaluation.keys()[r2]]
+        print self.evaluation.keys()[r3]
+        print self.evaluation[self.evaluation.keys()[r3]]
         
-        
+        print "**********************"
+        print "<主要なワード>"
+        words = ["占い","霊能","狩人","共有","噛み","吊り","CO"]
+        for w in words:
+            if self.evaluation.has_key(w):
+                print "【"+w+"】"
+                for j in self.evaluation[w].keys():
+                    print "*****%s,%f" %( j , self.evaluation[w][j])
+
+        #
+        #for, 'utf-8')')
         #
         #for morpheme 
         #何を学習データにする？とりあえず各役職ごとに 
@@ -169,21 +186,27 @@ class PlayersLog():
                 job = j
         return job
     def judgeTest(self,job = "wolf"): 
-        srcfilename = "./log_analyzer/text_" + job +".txt"
+        srcfilename = PATH  + "text_" + job +".txt"
         f = open(srcfilename, "r")
         line = f.readline() 
         while line:
             m = re.search('.+\(.+\)「(.+)」',line)
             if m :
                 text = m.group(1)
-                print self.jobDistinction(text)
+                job = self.jobDistinction(text)
+                total = 0
+                for i in self.jobSuspection.values() :
+                    total +=  i
+                print job + " : " + str(self.jobSuspection[job] / total * 100) + "%"
             line = f.readline()
         f.close()       
         total = 0
+        print "********************************************"
         for tp in self.jobSuspection.items():
             total += tp[1]
         for tp in self.jobSuspection.items():
-            print tp[0] + ":" + str(100 * tp[1] / total) + "%"
+            print ("%s  : %.3f %%")  % (tp[0], 100 * tp[1] / total)
+        print "********************************************"
     def printMorphemeScore(self,morpheme):
         if self.evaluation.has_key(morpheme):
             print "「" + morpheme + "」"
@@ -195,15 +218,15 @@ if __name__ == "__main__":
     params = sys.argv
     log = PlayersLog()
     if len(params) >= 3 :
-        srcfilename = params[1]
-        destfilename = params[2]
+        srcfilename = PATH + params[1]
+        destfilename = PATH + params[2]
         log.getLog(srcfilename)
         log.saveParsedLog(destfilename)
     else:
-        log.getLog("./log_analyzer/log_src.txt")
-        log.getLog("./log_analyzer/log_src2.txt")
-        log.getLog("./log_analyzer/log_src3.txt")
-        #log.saveParsedLog()
+        log.getLog(PATH + "log_src.txt")
+        log.getLog(PATH + "log_src2.txt")
+        log.getLog(PATH + "log_src3.txt")
+        log.saveParsedLog()
         log.learn()
         log.judgeTest("lunatic")
         #log.printMorphemeScore("○")
