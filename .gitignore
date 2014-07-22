@@ -2,5 +2,4 @@
 
 
 ./servey
-./log_analyzer/*.txt
 *.pyc
