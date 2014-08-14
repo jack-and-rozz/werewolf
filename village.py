@@ -33,7 +33,7 @@ class Village: #実際のゲーム処理
         self.hunter = None
         self.freemasons = []
         self.fox = None
-        self.checkActorsJobs()
+        self.checkActorsRoles()
 
 
     def start(self):
@@ -43,22 +43,22 @@ class Village: #実際のゲーム処理
         for actor in self.actors:
             actor.thinkInit()
 
-    def checkActorsJobs(self): #各職業が誰か記録する
+    def checkActorsRoles(self): #各職業が誰か記録する
         for actor in self.actors :
-            if actor.job.job_id == Const.Wolf:
-                self.wolves.append(actor.job)
-            elif actor.job.job_id == Const.Lunatic:
-                self.lunatic = actor.job
-            elif actor.job.job_id == Const.Seer:
-                self.seer = actor.job
-            elif actor.job.job_id == Const.Medium:
-                self.medium = actor.job
-            elif actor.job.job_id == Const.Hunter:
-                self.hunter = actor.job
-            elif actor.job.job_id == Const.Freemason:
-                self.freemasons.append(actor.job)
-            elif actor.job.job_id == Const.Fox:
-                self.fox.append(actor.job)
+            if actor.role.role_id == Const.Wolf:
+                self.wolves.append(actor.role)
+            elif actor.role.role_id == Const.Lunatic:
+                self.lunatic = actor.role
+            elif actor.role.role_id == Const.Seer:
+                self.seer = actor.role
+            elif actor.role.role_id == Const.Medium:
+                self.medium = actor.role
+            elif actor.role.role_id == Const.Hunter:
+                self.hunter = actor.role
+            elif actor.role.role_id == Const.Freemason:
+                self.freemasons.append(actor.role)
+            elif actor.role.role_id == Const.Fox:
+                self.fox.append(actor.role)
 
     def printVotingLog(self,day):
         print ""
@@ -102,11 +102,11 @@ class Village: #実際のゲーム処理
     def printAllActorsDetail(self):
         print "生存 (%d人) :" % len(self.livingActors()) ,
         for i in range(0,len(self.livingActors())):
-            print self.livingActors()[i].name + "(" + Const.JobNameWords[self.livingActors()[i].job.job_id] + ")  ",
+            print self.livingActors()[i].name + "(" + Const.RoleNameWords[self.livingActors()[i].role.role_id] + ")  ",
         print ""
         print "死亡 (%d人) :" % len(self.deadActors()) ,
         for i in range(0,len(self.deadActors())):
-            print self.deadActors()[i].name + "(" + Const.JobNameWords[self.deadActors()[i].job.job_id] + ")  ",
+            print self.deadActors()[i].name + "(" + Const.RoleNameWords[self.deadActors()[i].role.role_id] + ")  ",
         print ""
     def livingActors(self):
         list = []    
@@ -125,7 +125,7 @@ class Village: #実際のゲーム処理
         white = 0
         black = 0
         for actor in self.livingActors():
-            if actor.job.job_id == Const.Wolf:
+            if actor.role.role_id == Const.Wolf:
                 black += 1
             else:
                 white += 1
@@ -230,13 +230,13 @@ class Village: #実際のゲーム処理
         actors = []
         r = random.randint(0,len(Const.ActorNameListA)-actors_num)
         name_nums_list = range(0+r,actors_num+r)
-        job_nums_list = range(0,actors_num)
+        role_nums_list = range(0,actors_num)
         random.shuffle(name_nums_list)
-        random.shuffle(job_nums_list)
+        random.shuffle(role_nums_list)
         for i in range(0,actors_num):
             id = i
-            job_id = Const.JobsList[job_nums_list[i]] 
+            role_id = Const.RolesList[role_nums_list[i]] 
             name = LetraWerewolfUtil.makeDefaultName(name_nums_list[i])
             village = self
-            actors.append(Actor(i,name,job_id,village))
+            actors.append(Actor(i,name,role_id,village))
         return actors    

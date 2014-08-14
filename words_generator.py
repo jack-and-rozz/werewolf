@@ -9,9 +9,11 @@ import sys,os
 #これに加えて、何を言われたかもマルコフ遷移の条件にしなきゃダメそう。
 #ログから、誰に対して何を言ったかを検出する。難しそう・・・
 
+PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
+ 
 class WordsGenerator():
     def __init__(self) :
-        self.wordlist = self.makeWordList(os.path.dirname(os.path.abspath(__file__)) + "/log_analyzer/log_dest.txt")
+        self.wordlist = self.makeWordList(PATH + "log_analyzer/logfiles/parsed_log")
         self.markov = self.makeMarkov()
     def makeWordList(self,filename):
         text = open(filename, "r").read()

@@ -1,6 +1,7 @@
 
-
-
 ./servey
-./log_analyzer/*.txt
+./log_analyser/*.txt
+./log_analyser/others
+./log_analyser/logfiles/log_src*
+./log_analyser/parameters
 *.pyc

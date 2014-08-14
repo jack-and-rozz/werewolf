@@ -40,7 +40,7 @@ class Const:
 
     NoOne = -99
 
-    JobNameWords = {
+    RoleNameWords = {
         Wolf : "人狼",
         Lunatic : "狂人",
         Seer : "占い師",
@@ -52,7 +52,7 @@ class Const:
         #Cat : "猫又",
         #ChildFox : "子狐"
     }
-    JobsList = [Wolf,Villager,Villager,Villager,Seer,Wolf,Medium,Villager,Lunatic,Hunter,Villager,Villager,Villager,Freemason,Freemason,Villager,Villager]
+    RolesList = [Wolf,Villager,Villager,Villager,Seer,Wolf,Medium,Villager,Lunatic,Hunter,Villager,Villager,Villager,Freemason,Freemason,Villager,Villager]
     ActorNameListA = ["楽天家","村長","老人","神父","木こり","旅人","ならず者","少年","少女","行商人","羊飼い","パン屋","青年","村娘","農夫","宿屋の女主人","シスター","仕立屋","司書","負傷兵"]
     ActorNameListB = ["ゲルト","ヴァルター","モーリッツ","ジムゾン","トーマス","ニコラス","ディーター","ペーター","リーザ","アルビン","カタリナ","オットー","ヨアヒム","パメラ","ヤコブ","レジーナ","フリーデル","エルナ","クララ","シモン"]
 

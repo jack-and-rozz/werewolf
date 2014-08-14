@@ -4,13 +4,13 @@ import random
 from werewolf_dictionary import Const
 from words_generator import WordsGenerator
 from brain import Brain
-from jobs import Villager
-from jobs import Wolf
-from jobs import Lunatic
-from jobs import Seer
-from jobs import Medium
-from jobs import Hunter
-from jobs import Freemason
+from roles import Villager
+from roles import Wolf
+from roles import Lunatic
+from roles import Seer
+from roles import Medium
+from roles import Hunter
+from roles import Freemason
 
 """
 Actorの思考にはなんのパラメータが必要か？
@@ -24,12 +24,12 @@ Actorの思考にはなんのパラメータが必要か？
 
 class Actor:
     shared_word_generator = WordsGenerator() #とりあえず話し方は共有。
-    def __init__(self,id,name,job_id,village):
+    def __init__(self,id,name,role_id,village):
         #アクターの不変の情報
         self.id = id
         self.name = name
         self.village = village #ここから現在の村の情報にアクセスする
-        self.job = self.setJob(job_id)
+        self.role = self.setRole(role_id)
         #アクターの現在の状態
         self.is_living = True
         #アクターの脳内。
@@ -40,7 +40,7 @@ class Actor:
     def thinkInit(self):
         self.brain.initThinking()
         self.know((Const.Self,self.name),Const.RULE)
-        self.know((Const.Self,self.job.name),Const.TRUTH)
+        self.know((Const.Self,self.role.name),Const.TRUTH)
 
         self.know((Const.TotalWolves,len(self.village.wolves)),Const.RULE)
    
@@ -67,21 +67,21 @@ class Actor:
         i = self.village.livingActors()[r].id
         return self.village.actors[i].id
 
-    def setJob(self,job_id): #役職インスタンスは自分がどのアクターなのかを知っている。
-        if job_id == Const.Villager:
+    def setRole(self,role_id): #役職インスタンスは自分がどのアクターなのかを知っている。
+        if role_id == Const.Villager:
             return Villager(self.id,self.village)
-        elif job_id == Const.Wolf:
+        elif role_id == Const.Wolf:
             return Wolf(self.id,self.village)
-        elif job_id == Const.Lunatic:
+        elif role_id == Const.Lunatic:
             return Lunatic(self.id,self.village)
-        elif job_id == Const.Seer:
+        elif role_id == Const.Seer:
             return Seer(self.id,self.village)
-        elif job_id == Const.Medium:
+        elif role_id == Const.Medium:
             return Medium(self.id,self.village)
-        elif job_id == Const.Hunter:
+        elif role_id == Const.Hunter:
             return Hunter(self.id,self.village)
-        elif job_id == Const.Freemason:
+        elif role_id == Const.Freemason:
             return Freemason(self.id,self.village)
-        elif job_id == Const.Fox:
+        elif role_id == Const.Fox:
             return Fox(self.id,self.village)
         

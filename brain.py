@@ -6,12 +6,9 @@ from werewolf_dictionary import Const
 class Brain():
     def __init__(self,village):
         self.village = village
-        self.suspicions = [[],[],[],[],[],[],[],[]] #各役職であると疑っている度合い
+        self.suspicions = [[],[],[],[],[],[],[],[]] #各役職であると疑っている度合い?
 
         self.inference = {} 
-        #{"src":self, "A":self ,"B":self.job,"NOT":False,"Reliability":TRUTH} のように、
-        #情報源と信頼性、AがBである/ない をここに入れる。
-        #もしくは inference[(A,B)] = PER のように、AがBである可能性を表すか？
     def searchInference(self):
         
         return
