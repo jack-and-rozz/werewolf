@@ -22,19 +22,13 @@ class WordsGenerator():
         texts = self.log_manager.outputAllTexts()
         self.wordlist = self.makeWordList(texts)
         self.markov = self.makeMarkov()
-        for key in self.markov.keys():
-            print key[0] + ","+key[1]
         
     def makeWordList(self,textlist):
         t = MeCab.Tagger("-Owakati")
-        m = t.parse("私の名前はレトラです。")
-        print len(m)
-        print m
-        exit()
         wordlist = []
         for line in textlist:
             #一度に一定行数（10万くらい？超えると読み込めなくなってmがNoneになる
-            m = t.parse(line.rstrip("\n"))
+            m = t.parse(line).rstrip(" \n").split(" ") #split(" ")しないと空白含め1バイトずつ保存されてしまう 
             wordlist.extend(m)
         return wordlist
     def makeMarkov(self):
