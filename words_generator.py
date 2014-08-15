@@ -3,17 +3,16 @@
 import random
 import MeCab
 import sys,os
+from werewolf_dictionary import FilePath
 
 
 #とりあえず毎回学習。サイズが大きくなってくると学習結果を保存したほうが良さそう。
 #これに加えて、何を言われたかもマルコフ遷移の条件にしなきゃダメそう。
 #ログから、誰に対して何を言ったかを検出する。難しそう・・・
 
-PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
- 
 class WordsGenerator():
     def __init__(self) :
-        self.wordlist = self.makeWordList(PATH + "log_analyzer/logfiles/parsed_log")
+        self.wordlist = self.makeWordList(FilePath.PATH + FilePath.PARSED_LOG)
         self.markov = self.makeMarkov()
     def makeWordList(self,filename):
         text = open(filename, "r").read()

@@ -4,6 +4,12 @@
 memo
  [x for x in [1,2,3,4,5] if x > 3]
 """
+import sys,os
+
+class FilePath:
+    PARSED_LOG = "log_manager/logfiles/parsed_log"
+    PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
+
 class Const:
     #定数。被らないように。
     Wolf = 0
@@ -35,8 +41,6 @@ class Const:
     Self = "自分"
     Human = "人間"
     TotalLivingHuman = "生きている人間"
-
-
 
     NoOne = -99
 

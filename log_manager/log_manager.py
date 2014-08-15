@@ -84,9 +84,9 @@ class RoleInferenceEngine():
         f = open(srcfilename, "r")
         line = f.readline() 
         while line:
-            m = re.search('.+\(.+\)「(.+)」',line)
-            if m :
-                text = m.group(1)
+            m = re.search('\[(.*),(.*),(生存中|死亡)\]',line)
+            if m == None: #キャラクタデータの部分は捨てる
+                text = line
                 role = self.roleDistinction(text)
                 total = 0
                 for i in self.roleSuspection.values() :
@@ -247,6 +247,7 @@ class LogManager():
 
 if __name__ == "__main__":
     params = sys.argv
+    argc = len(params)
     logmanager = LogManager()
     if len(params) <= 1 : 
         print "********************************************"
@@ -256,13 +257,22 @@ if __name__ == "__main__":
 
     mode = params[1]
     if mode == "-parse" :
-        log_srcfilename = PATH + "logfiles/log_src"
-        logmanager.getLog(log_srcfilename)
-        log_srcfilename = PATH + "logfiles/log_src2"
-        logmanager.getLog(log_srcfilename)
-        log_srcfilename = PATH + "logfiles/log_src3"
-        logmanager.getLog(log_srcfilename)
-        parsed_logfilename = PATH + "logfiles/parsed_log"
+        if (argc <= 1):
+            log_srcfilename = PATH + "logfiles/log_src"
+            logmanager.getLog(log_srcfilename)
+            log_srcfilename = PATH + "logfiles/log_src2"
+            logmanager.getLog(log_srcfilename)
+            log_srcfilename = PATH + "logfiles/log_src3"
+            logmanager.getLog(log_srcfilename)
+            parsed_logfilename = PATH + "logfiles/parsed_log"
+        elif (argc == 2):
+            print "error : 出力ファイル名を指定してください\n"
+            exit()
+        elif (argc >= 3):
+            log_srcfilename = PATH + "logfiles/" + params[2]
+            logmanager.getLog(log_srcfilename)
+            parsed_logfilename = PATH + "logfiles/" + params[3]
+
         logmanager.saveParsedLog(parsed_logfilename,"w+")
     elif mode == "-learn":
         logmanager.loadParsedLog(PATH + "logfiles/parsed_log")
