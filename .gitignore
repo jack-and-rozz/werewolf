@@ -5,3 +5,6 @@
 ./log_analyser/logfiles/log_src*
 ./log_analyser/parameters
 *.pyc
+./text/*.dvi
+./text/*.log
+./text/*.aux

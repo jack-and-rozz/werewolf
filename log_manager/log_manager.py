@@ -79,10 +79,11 @@ class RoleInferenceEngine():
                 role = j
         return role
 
-    def roleInferenceTest(self,role = "wolf"): 
-        srcfilename = PATH  + "sampletexts/text_" + role +""
+    def roleInferenceTest(self,rolename = "wolf"): 
+        srcfilename = PATH  + "sampletexts/text_" + rolename +""
         f = open(srcfilename, "r")
         line = f.readline() 
+        role = None
         while line:
             m = re.search('\[(.*),(.*),(生存中|死亡)\]',line)
             if m == None: #キャラクタデータの部分は捨てる
@@ -96,11 +97,11 @@ class RoleInferenceEngine():
         f.close()       
         total = 0
         print "********************************************"
+        print "<%s> 結果 : %s" % (rolename,role)
         for tp in self.roleSuspection.items():
             total += tp[1]
         for tp in self.roleSuspection.items():
             print ("%s  : %.3f %%")  % (tp[0], 100 * tp[1] / total)
-        print "********************************************"
     def printMorphemeScore(self,morpheme):
         if self.evaluation.has_key(morpheme):
             print "「" + morpheme + "」"
@@ -249,7 +250,7 @@ if __name__ == "__main__":
     params = sys.argv
     argc = len(params)
     logmanager = LogManager()
-    if len(params) <= 1 : 
+    if argc <= 1 : 
         print "********************************************"
         print "引数が正しくありません"
         print "********************************************"
@@ -275,13 +276,18 @@ if __name__ == "__main__":
 
         logmanager.saveParsedLog(parsed_logfilename,"w+")
     elif mode == "-learn":
-        logmanager.loadParsedLog(PATH + "logfiles/parsed_log")
+        parsed_log = "parsed_log"
+        if (argc >= 3):
+            parsed_log = params[2]
+        logmanager.loadParsedLog(PATH + "logfiles/" + parsed_log)
         inferencer = RoleInferenceEngine(logmanager)
         inferencer.learn()
         inferencer.checkEvaluations()
         inferencer.saveParameters()
+
     elif mode == "-infer":
         role = params[2]
+        #保存したパラメータをまだ使用していない
         logmanager.loadParsedLog(PATH + "logfiles/parsed_log")
         inferencer = RoleInferenceEngine(logmanager)
         inferencer.learn()
