@@ -1,5 +1,5 @@
 
-#### ログファイルの管理はlog_managerディレクトリで行う。
+#### ログファイルの管理(./werewolf/log_manager)
 * ログファイルの整型
 `python log_manager -parse [srcfilename] [destfilename]`
 ./log_manager/logfiles内のわかめての村ログをパース可能。
