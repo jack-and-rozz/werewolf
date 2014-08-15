@@ -10,6 +10,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/" + os.pardir)
 #print os.pardir
 #print os.path.dirname(os.path.abspath(__file__))
 from werewolf_dictionary import Const
+from werewolf_dictionary import FilePath
 
 PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
 
@@ -85,8 +86,7 @@ class RoleInferenceEngine():
         line = f.readline() 
         role = None
         while line:
-            m = re.search('\[(.*),(.*),(生存中|死亡)\]',line)
-            if m == None: #キャラクタデータの部分は捨てる
+            if re.search(Const.CharacterDataLogFormat,line) == None:
                 text = line
                 role = self.roleDistinction(text)
                 total = 0
@@ -146,7 +146,7 @@ class LogManager():
                       #characters[i]はlife,role,texts を要素として持つ。それぞれ、最終的な生存・役職・喋った台詞。
 
     #parsed_logからキャラクタ毎の記録を生成。
-    def loadParsedLog(self,srcfilename = PATH + "logfiles/parsed_log"):
+    def loadParsedLog(self,srcfilename = FilePath.PATH + FilePath.PARSED_LOG):
         f = open(srcfilename,"r")
         line = f.readline()
         name = ""
@@ -242,8 +242,12 @@ class LogManager():
                 if character["role"] == role:
                     players_list.append(character)
         return players_list
-
-        
+    def outputAllTexts(self):
+        textlist = []
+        for characters in self.log.values():
+            for character in characters:
+                textlist.extend(character["texts"])
+        return textlist
 #########実行ファイル時#############
 
 if __name__ == "__main__":
@@ -288,7 +292,7 @@ if __name__ == "__main__":
     elif mode == "-infer":
         role = params[2]
         #保存したパラメータをまだ使用していない
-        logmanager.loadParsedLog(PATH + "logfiles/parsed_log")
+        logmanager.loadParsedLog(FilePath.PATH + FilePath.PARSED_LOG)
         inferencer = RoleInferenceEngine(logmanager)
         inferencer.learn()
         inferencer.roleInferenceTest(role)
