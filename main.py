@@ -1,8 +1,10 @@
+
 # coding:utf-8
 
 from village import Village
-from log_manager import RoleInferenceEngine
-from log_manager import LogManager
+from log_learning_engine import LogLearningEngine
+from role_inference_engine import RoleInferenceEngine
+from log_parser import LogParser
 
 import sys,os
 import codecs
@@ -19,7 +21,7 @@ from utils import FilePath
 if __name__ == "__main__":
     params = sys.argv
     argc = len(params)
-    logmanager = LogManager()
+    
     if argc <= 1 : 
         print "********************************************"
         print "Invalid options"
@@ -32,33 +34,39 @@ if __name__ == "__main__":
 
     mode = params[1]
     if mode == "-parse" :
+        log_parser = LogParser()
         if (argc <= 1):
             log_srcfilename = FilePath.ROOTPATH + FilePath.SOURCE_LOG
-            logmanager.getLog(log_srcfilename)
+            log_parser.getLog(log_srcfilename)
             parsed_logfilename = FilePath.ROOTPATH + FilePath.PARSED_LOG
         elif (argc == 2):
             print "error : 出力ファイル名を指定してください\n"
             exit()
         elif (argc >= 3):
             srcfile = FilePath.ROOTPATH + FilePath.LOGFILES + params[2]
-            logmanager.getLog(srcfile)
+            log_parser.getLog(srcfile)
             parsed_logfilename = FilePath.ROOTPATH + FilePath.LOGFILES + params[3]
 
-        logmanager.saveParsedLog(parsed_logfilename,"w+")
+        log_parser.saveParsedLog(parsed_logfilename,"w+")
     elif mode == "-learn":
-        logmanager.loadParsedLog(FilePath.ROOTPATH + FilePath.PARSED_LOG)
-        inferencer = RoleInferenceEngine(logmanager)
-        inferencer.learn()
-        inferencer.checkEvaluations()
-        inferencer.saveParameters()
+        
+        log_parser = LogParser()
+        log_parser.loadParsedLog(FilePath.ROOTPATH + FilePath.PARSED_LOG)
+        learning_engine = RoleInferenceEngine(log_parser)
+        learning_engine.learnFromLog()
+        learning_engine.checkEvaluations()
+        learning_engine.saveParameters()
 
     elif mode == "-infer":
         role = params[2]
-        #保存したパラメータをまだ使用していない
-        logmanager.loadParsedLog(FilePath.ROOTPATH + FilePath.PARSED_LOG)
-        inferencer = RoleInferenceEngine(logmanager)
-        inferencer.learn()
-        inferencer.roleInferenceTest(role)
+        role_inference_engine = RoleInferenceEngine()
+        role_inference_engine.loadLearnedParameters()
+        role_inference_engine.roleInferenceTest(role)
+        #log_parser = LogParser()
+        #log_parser.loadParsedLog(FilePath.ROOTPATH + FilePath.PARSED_LOG)
+        #learning_engine =LogLearningEngine(log_parser)
+        #learning_engine.learnFromLog()
+        #learning_engine.roleInferenceTest(role)
     elif mode == "-game":
         village = Village(13)
         village.start()

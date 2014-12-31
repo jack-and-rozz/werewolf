@@ -8,15 +8,15 @@ from utils import FilePath
 
 sys.path.append(FilePath.ROOTPATH + "log_manager")
 
-from log_manager import LogManager
+from log_parser import LogParser
 
 
 class WordsGenerator():
     def __init__(self) :
-        self.log_manager = LogManager()
-        self.log_manager.loadParsedLog(FilePath.ROOTPATH + FilePath.PARSED_LOG)
-        texts = self.log_manager.outputAllTexts()
-        self.wordlist = self.makeWordList(texts)
+        self.log_parser = LogParser()
+        self.log_parser.loadParsedLog(FilePath.ROOTPATH + FilePath.PARSED_LOG)
+        textlist = self.log_parser.outputAllTexts()
+        self.wordlist = self.makeWordList(textlist)
         self.markov = self.makeMarkov()
         
     def makeWordList(self,textlist):
