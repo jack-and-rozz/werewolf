@@ -5,14 +5,13 @@ import MeCab
 import sys,os
 import codecs
 
+
 sys.path.append(os.pardir)
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/" + os.pardir)
-#print os.pardir
-#print os.path.dirname(os.path.abspath(__file__))
-from werewolf_dictionary import Const
-from werewolf_dictionary import FilePath
 
-PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
+
+from utils import Const
+from utils import FilePath
 
 
 #パースしたログから学習したLogManagerインスタンスを元に、形態素毎の各役職のスコアを管理する。
@@ -28,7 +27,7 @@ class RoleInferenceEngine():
         for j in self.roleList:
             self.roleSuspection[j] = 0.0
             self.speakNum[j] = 0
-    def learn(self,learn_srcfilename = PATH + "logfiles/parsed_log"):
+    def learn(self,learn_srcfilename = FilePath.ROOTPATH + FilePath.PARSED_LOG):
         t = MeCab.Tagger("-Owakati")
         for role in Const.RoleNameWords.values():
             players = self.log.pickupCharactersHavingRole(role)
@@ -81,7 +80,7 @@ class RoleInferenceEngine():
         return role
 
     def roleInferenceTest(self,rolename = "wolf"): 
-        srcfilename = PATH  + "sampletexts/text_" + rolename +""
+        srcfilename = FilePath.ROOTPATH  + FilePath.SAMPLE_TEXTS+ "/text_" + rolename +""
         f = open(srcfilename, "r")
         line = f.readline() 
         role = None
@@ -129,7 +128,7 @@ class RoleInferenceEngine():
                 for j in self.evaluation[w].keys():
                     print "*%s,%f" %( j , self.evaluation[w][j])
 
-    def saveParameters(self,destfilename = PATH + "parameters/role_evaluation"):
+    def saveParameters(self,destfilename = FilePath.ROOTPATH +  FilePath.LEARNED_PARAMETERS + "role_evaluation"):
         f = open(destfilename,"w+")
         for key in self.evaluation.keys():
             text = "%s:" % key
@@ -146,7 +145,7 @@ class LogManager():
                       #characters[i]はlife,role,texts を要素として持つ。それぞれ、最終的な生存・役職・喋った台詞。
 
     #parsed_logからキャラクタ毎の記録を生成。
-    def loadParsedLog(self,srcfilename = FilePath.PATH + FilePath.PARSED_LOG):
+    def loadParsedLog(self,srcfilename = FilePath.ROOTPATH + FilePath.PARSED_LOG):
         f = open(srcfilename,"r")
         line = f.readline()
         name = ""
@@ -175,7 +174,7 @@ class LogManager():
         f.close()
         
     #わかめてのログ用のパーサ。log_srcから整形したparsed_logを生成。
-    def parseWakameteLog(self,srcfilename = PATH  + "logfiles/log_src",characters = {}):
+    def parseWakameteLog(self,srcfilename = FilePath.ROOTPATH  + "logfiles/log_src",characters = {}):
         f = open(srcfilename, "r")
         line = f.readline() # 1行を文字列として読み込む(改行文字も含まれる)
         while line:
@@ -226,7 +225,7 @@ class LogManager():
     def getLog(self,srcfilename):
          self.parseWakameteLog(srcfilename,self.log)
        
-    def saveParsedLog(self,destfilename = "./log_analyzer/parsed_log",option = "a"):
+    def saveParsedLog(self,destfilename = "log_manager/log_analyzer/parsed_log",option = "a"):
         f2 = open(destfilename, option)
         for name in self.log.keys():
             for character in self.log[name]:
@@ -248,53 +247,3 @@ class LogManager():
             for character in characters:
                 textlist.extend(character["texts"])
         return textlist
-#########実行ファイル時#############
-
-if __name__ == "__main__":
-    params = sys.argv
-    argc = len(params)
-    logmanager = LogManager()
-    if argc <= 1 : 
-        print "********************************************"
-        print "引数が正しくありません"
-        print "********************************************"
-        exit()
-
-    mode = params[1]
-    if mode == "-parse" :
-        if (argc <= 1):
-            log_srcfilename = PATH + "logfiles/log_src"
-            logmanager.getLog(log_srcfilename)
-            log_srcfilename = PATH + "logfiles/log_src2"
-            logmanager.getLog(log_srcfilename)
-            log_srcfilename = PATH + "logfiles/log_src3"
-            logmanager.getLog(log_srcfilename)
-            parsed_logfilename = PATH + "logfiles/parsed_log"
-        elif (argc == 2):
-            print "error : 出力ファイル名を指定してください\n"
-            exit()
-        elif (argc >= 3):
-            log_srcfilename = PATH + "logfiles/" + params[2]
-            logmanager.getLog(log_srcfilename)
-            parsed_logfilename = PATH + "logfiles/" + params[3]
-
-        logmanager.saveParsedLog(parsed_logfilename,"w+")
-    elif mode == "-learn":
-        parsed_log = "parsed_log"
-        if (argc >= 3):
-            parsed_log = params[2]
-        logmanager.loadParsedLog(PATH + "logfiles/" + parsed_log)
-        inferencer = RoleInferenceEngine(logmanager)
-        inferencer.learn()
-        inferencer.checkEvaluations()
-        inferencer.saveParameters()
-
-    elif mode == "-infer":
-        role = params[2]
-        #保存したパラメータをまだ使用していない
-        logmanager.loadParsedLog(FilePath.PATH + FilePath.PARSED_LOG)
-        inferencer = RoleInferenceEngine(logmanager)
-        inferencer.learn()
-        inferencer.roleInferenceTest(role)
-    else:
-        print "引数が正しくありません"

@@ -1,5 +1,5 @@
 # coding:utf-8
-from werewolf_dictionary import Const
+from utils import Const
 import random
 
 class Role:

@@ -1,9 +1,9 @@
 # coding:utf-8
 
 import random
-from werewolf_dictionary import Const
+from utils import Const
 from words_generator import WordsGenerator
-from brain import Brain
+
 from roles import Villager
 from roles import Wolf
 from roles import Lunatic
@@ -32,25 +32,10 @@ class Actor:
         self.role = self.setRole(role_id)
         #アクターの現在の状態
         self.is_living = True
-        #アクターの脳内。
-        self.brain = Brain(self.village)
         #アクターのパラメータ・個性
-        self.intelligence = 100
         self.words_generator = Actor.shared_word_generator
-    def thinkInit(self):
-        self.brain.initThinking()
-        self.know((Const.Self,self.name),Const.RULE)
-        self.know((Const.Self,self.role.name),Const.TRUTH)
-
-        self.know((Const.TotalWolves,len(self.village.wolves)),Const.RULE)
-   
-        self.printAllInference()
-    def printAllInference(self):
-        print "< " + self.name + " >"
-        for inf in self.brain.inference:
-            print "%sは%sだ。　信頼性 %d " % (str(inf[0]),str(inf[1]),self.brain.inference[inf])
     def know(self,fact_tuple,reliability):
-        self.brain.getKnowledge(fact_tuple,reliability)
+        return
     def speak(self):
         words = self.words_generator.makeSentence(20)
         print str(self.name) + " : " + words 

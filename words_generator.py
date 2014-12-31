@@ -4,21 +4,17 @@ import random
 import MeCab
 import sys,os
 
-from werewolf_dictionary import FilePath
+from utils import FilePath
 
-sys.path.append(FilePath.PATH + "log_manager")
+sys.path.append(FilePath.ROOTPATH + "log_manager")
 
 from log_manager import LogManager
 
 
-#とりあえず毎回学習。サイズが大きくなってくると学習結果を保存したほうが良さそう。
-#これに加えて、何を言われたかもマルコフ遷移の条件にしなきゃダメそう。
-#ログから、誰に対して何を言ったかを検出する。難しそう・・・
-
 class WordsGenerator():
     def __init__(self) :
         self.log_manager = LogManager()
-        self.log_manager.loadParsedLog(FilePath.PATH + FilePath.PARSED_LOG)
+        self.log_manager.loadParsedLog(FilePath.ROOTPATH + FilePath.PARSED_LOG)
         texts = self.log_manager.outputAllTexts()
         self.wordlist = self.makeWordList(texts)
         self.markov = self.makeMarkov()

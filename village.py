@@ -1,6 +1,6 @@
 # coding:utf-8
-from werewolf_dictionary import Const
-from letra_util import LetraWerewolfUtil
+from utils import Const
+from utils import UtilMethods
 from actor import Actor
 import random
 import time
@@ -15,17 +15,17 @@ import time
 """
 
 class Village: #実際のゲーム処理
-    from werewolf_dictionary import Const 
+    from utils import Const 
     def __init__(self,actors_num):
         self.day = 0
         self.phase = Const.Night
         self.actors = self.createActors(actors_num)
-        self.executed_list = [None]
+        self.executed_list = [None] 
         self.protected_list = [None]
         self.killed_list = [None]
-        self.chatlogs = [[{"actor_id" : -1, "words" : "0日目です。ゲームが始まりました..."}]]
-        self.votelogs = [{"vote_for":None,"obtained":None}] #誰が誰に投票したかとまとめた得票数が記録される
-        self.chatting_time = 10
+        self.chatlogs = [[{"actor_id" : -1, "words" : "0日目です。ゲームが始まりました..."}]] #日毎の発言とその発言者が記録される
+        self.votelogs = [{"vote_for":None,"obtained":None}] #誰が誰に投票したかとそのアクターの得票数が日毎に記録される
+        self.chatting_time = 10 #一日の総発言回数。その回数ランダムに選んで発言させる。
         self.wolves = []
         self.lunatic = None
         self.seer = None
@@ -38,11 +38,14 @@ class Village: #実際のゲーム処理
 
     def start(self):
         self.gameInit()
-        self.nightPhase()
+        while(self.judgeGameEnd()):
+            if self.phase == Const.Night:
+                self.nightPhase()
+            elif self.phase == Const.Day:
+                self.dayPhase()
+        exit()
     def gameInit(self): #Actorインスタンスが生成されてから決定する事を伝える(合計actorの人数とか)
-        for actor in self.actors:
-            actor.thinkInit()
-
+        return
     def checkActorsRoles(self): #各職業が誰か記録する
         for actor in self.actors :
             if actor.role.role_id == Const.Wolf:
@@ -64,10 +67,9 @@ class Village: #実際のゲーム処理
         print ""
         vote_for = self.votelogs[day]["vote_for"]
         obtained =  self.votelogs[day]["obtained"]
-        for actor in self.actors:
-            if not vote_for[actor.id] == Const.NoOne:
-                resultStr = actor.name +  "(" + str(obtained[actor.id]) +"票)→　" + self.actors[vote_for[actor.id]].name
-                print resultStr
+        for actor in self.livingActors():
+            resultStr = actor.name +  "(" + str(obtained[actor.id]) +"票)→　" + self.actors[vote_for[actor.id]].name
+            print resultStr
         print ""
         return
     def printVillageState(self):
@@ -151,9 +153,9 @@ class Village: #実際のゲーム処理
         executed_id_list =  [i for i,j in enumerate(obtained) if j == max(obtained)]
         random.shuffle(executed_id_list)  #最多票が複数あった場合ランダムに選択
         actor = self.actors[executed_id_list[0]]
-        self.execute(actor)
         self.printVotingLog(self.day)
         print "<System> : 投票の結果、" + actor.name + "さんが処刑されました。"
+        self.execute(actor)
         return actor
     def execute(self,actor):
         actor.is_living = False
@@ -190,16 +192,7 @@ class Village: #実際のゲーム処理
 
         self.chattingPhase()
         self.votingPhase()
-
-        if self.isGameOver() == Const.WinVillage:
-            print "\n<System> : 全ての人狼を退治した……。人狼に怯える日々は去ったのだ！"
-            self.endGame();
-        elif self.isGameOver() == Const.WinWolves:
-            print "\n<System> : もう人狼に対抗できるほど村人は残っていない・・・人狼は全ての村人を食い、次の村へと去っていった。"
-            self.endGame();
-   
-        else:
-            self.nightPhase()
+        self.phase = Const.Night
         return 
     def nightPhase(self):
         self.phase = Const.Night
@@ -209,16 +202,17 @@ class Village: #実際のゲーム処理
         self.medium.mediumTelling()
         self.hunter.protection()
         self.leaderWolf().attack()
+        self.phase = Const.Day
+        return
+    def judgeGameEnd(self):
         if self.isGameOver() == Const.WinVillage:
             print "\n<System> : 全ての人狼を退治した……。人狼に怯える日々は去ったのだ！"
-            self.endGame();
+            self.endGame()
         elif self.isGameOver() == Const.WinWolves:
             print "\n<System> : もう人狼に対抗できるほど村人は残っていない・・・人狼は全ての村人を食い、次の村へと去っていった。"
-            self.endGame();
+            self.endGame()
         else:
-            self.dayPhase()
-        return
-
+            return True
     def leaderWolf(self):
         for wolf in self.wolves : #生きている人狼のうち先頭のものを選ぶ
             if self.actors[wolf.actor_id].is_living:
@@ -226,6 +220,7 @@ class Village: #実際のゲーム処理
     def endGame(self):
         print ""
         self.printAllActorsDetail()
+        return False
     def createActors(self,actors_num):
         actors = []
         r = random.randint(0,len(Const.ActorNameListA)-actors_num)
@@ -236,7 +231,7 @@ class Village: #実際のゲーム処理
         for i in range(0,actors_num):
             id = i
             role_id = Const.RolesList[role_nums_list[i]] 
-            name = LetraWerewolfUtil.makeDefaultName(name_nums_list[i])
+            name = UtilMethods.makeDefaultName(name_nums_list[i])
             village = self
             actors.append(Actor(i,name,role_id,village))
         return actors    
