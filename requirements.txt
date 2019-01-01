@@ -1,0 +1,20 @@
+# Crawling
+requests
+beautifulsoup4
+lxml
+selenium
+
+
+# Django
+Django
+djangorestframework
+markdown
+django-filter
+PyMySQL
+mysqlclient
+httpie
+
+# Utils
+orderedset
+pandas
+pprint
