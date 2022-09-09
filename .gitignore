@@ -20,3 +20,4 @@ nohup.out
 tmp*
 .DS_Store
 .python-version
+logs
