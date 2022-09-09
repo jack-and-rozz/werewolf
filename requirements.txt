@@ -1,11 +1,9 @@
-# Crawling
 requests
 beautifulsoup4
 lxml
 selenium
+html5lib
 
-
-# Django
 Django
 djangorestframework
 markdown
@@ -14,7 +12,6 @@ PyMySQL
 mysqlclient
 httpie
 
-# Utils
 orderedset
 pandas
-pprint
+mojimoji
